@@ -7,7 +7,7 @@ services:
     depends_on:
       - mysql-db
     networks:
-      - todo-network
+      - user-network
   mysql-db:
     image: mysql:8
     environment:
