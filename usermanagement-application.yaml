@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagement-application
+  labels:
+    app: usermanagement-application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usermanagement-application
+  template:
+    metadata:
+      labels:
+        app: usermanagement-application
+    spec:
+      containers:
+        - name: usermanagement-application
+          image: sureshpsl/usermanagement-application-image:latest # Replace with your Docker hub repository name and tag
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-db-service:3306/tododb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: Root@123
+      imagePullSecrets:
+        - name: my-registry-secret # Docker Hub credentials secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usermanagement-application-service
+  labels:
+    app: usermanagement-application
+spec:
+  selector:
+    app: usermanagement-application
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30080
+  type: NodePort # Expose the application externally
